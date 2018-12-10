@@ -10,4 +10,5 @@ pansidong(盘丝洞）is a proxy ips' store service. pansidong is another name o
 Fortunatly,there are many free proxy ip provider on the internet. pansidong try to provide a store and standard api to help crawler developers focusing on developing instead of collection free ips.
 
 You can set up pansidong as a microservice and allocate every request a single proxy ip.
-                                                                                                                                                                                                                                               
+                                                                                                                                           ## *License*
+This software is released under the Apache 2.0 license.
