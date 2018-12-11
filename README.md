@@ -14,7 +14,8 @@ You can set up pansidong as a microservice and allocate every request a single p
 ## Architecture 
 <p align="center">
     <img src="https://moyuan.oss-cn-beijing.aliyuncs.com/pansidong/Architecture.png"/>
-</p> 
+</p>    
+
 ## Get Started  
 // TODO 
 
