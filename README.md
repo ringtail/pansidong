@@ -12,7 +12,7 @@ Fortunatly,there are many free proxy ip provider on the internet. pansidong try 
 You can set up pansidong as a microservice and allocate every request a single proxy ip.
 
 ## Architecture 
-// TODO 
+<img src="https://moyuan.oss-cn-beijing.aliyuncs.com/pansidong/Architecture.png"/>
 
 ## Get Started  
 // TODO 
