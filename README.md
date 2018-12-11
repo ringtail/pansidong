@@ -14,11 +14,8 @@ You can set up pansidong as a microservice and allocate every request a single p
 ## Architecture 
 <img src="https://moyuan.oss-cn-beijing.aliyuncs.com/pansidong/Architecture.png"/>
 
-## Get Started  
-// TODO 
-
-## Usage 
-// TODO 
-
+## hmm ... 
+I found this one (https://github.com/henson/proxypool), pretty cool ! 
+ 
 ## *License*
 This software is released under the Apache 2.0 license.
