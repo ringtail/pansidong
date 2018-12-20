@@ -33,22 +33,14 @@ type GetProxyListResponse struct {
 }
 
 type GetProxyListProvider struct {
-	Endpoint     string
-	NextTickTime time.Time
-	Healthy      bool
-	InProgress   bool
+	Endpoint string
 }
 
 func (gp *GetProxyListProvider) Name() (name string) {
 	return GetProxyListProviderName
 }
 
-func (gp *GetProxyListProvider) CheckHealth() (healthy bool, nextTickTime time.Time) {
-	return gp.Healthy, gp.NextTickTime
-}
-
 func (gp *GetProxyListProvider) GetProxyList() (ips []*types.ProxyIP, err error) {
-	gp.InProgress = true
 	ips = make([]*types.ProxyIP, 0)
 	for i := 0; i < DefaultMaxIps; i ++ {
 		ip, err := gp.getProxyIp()
@@ -58,15 +50,6 @@ func (gp *GetProxyListProvider) GetProxyList() (ips []*types.ProxyIP, err error)
 		}
 		ips = append(ips, ip)
 	}
-	if len(ips) == 0 {
-		gp.Healthy = false
-		gp.NextTickTime = time.Now().Add(time.Hour * 1)
-	} else {
-		gp.Healthy = true
-	}
-	defer func() {
-		gp.InProgress = false
-	}()
 	return
 }
 
@@ -106,8 +89,6 @@ func (gp *GetProxyListProvider) getProxyIp() (proxyIp *types.ProxyIP, err error)
 
 func init() {
 	GetProxyListProviderSingleton = &GetProxyListProvider{
-		Endpoint:     GetProxyListProviderEndpoint,
-		Healthy:      true,
-		NextTickTime: time.Now(),
+		Endpoint: GetProxyListProviderEndpoint,
 	}
 }
