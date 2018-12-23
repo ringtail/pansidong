@@ -100,11 +100,10 @@ func NewCacheManager(config *types.CacheConfig) (*CacheManager, error) {
 	cm.Cache = NewCache(config.Memory)
 
 	if config.Backend != nil {
-
+		log.Infof("backend is enabled,current backend is %s", config.Backend.Name())
 		cm.Backend = backend.BackendFactory(config.Backend)
-
 		size := config.Memory.Size
-		ips, err := cm.Backend.Next(&types.ListOptions{
+		ips, err := cm.Backend.List(&types.ListOptions{
 			Limit: size,
 		})
 		if err != nil {
@@ -118,6 +117,7 @@ func NewCacheManager(config *types.CacheConfig) (*CacheManager, error) {
 		if err != nil {
 			return nil, fmt.Errorf("Failed to refresh ip from backend,because of %s", err.Error())
 		}
+		log.Infof("Success refresh from backend %s with %d ips", config.Backend.Name(), len(ips))
 	}
 	return cm, nil
 }

@@ -83,9 +83,12 @@ func CreateBackendConfig(backendType string, j_string string) BackendConfig {
 	switch backendType {
 	case "boltdb":
 		bc := &BoltDBConfig{}
+		if j_string == "" {
+			return bc
+		}
 		err := json.Unmarshal([]byte(j_string), bc)
 		if err != nil {
-			log.Fatal("Failed to create %s backend config,because of %s", backendType, err.Error())
+			log.Fatalf("Failed to create %s backend config,because of %s", backendType, err.Error())
 		}
 		return bc
 	}

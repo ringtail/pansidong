@@ -32,7 +32,7 @@ func (s *Server) Run() {
 
 func NewServer(config *types.Config) *Server {
 	if err := config.Valid(); err != nil {
-		log.Fatal("Please input valid config file: %s", err.Error())
+		log.Fatalf("Please input valid config file: %s", err.Error())
 	}
 	cc := config.Config()
 	s := &Server{
@@ -40,7 +40,7 @@ func NewServer(config *types.Config) *Server {
 	}
 	c, err := cache.NewCacheManager(cc)
 	if err != nil {
-		log.Fatal("Failed to create cache manager because of %s", err.Error())
+		log.Fatalf("Failed to create cache manager because of %s", err.Error())
 	}
 	s.CacheManager = c
 	return s
