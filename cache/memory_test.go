@@ -7,13 +7,13 @@ import (
 )
 
 var (
-	m     Store
+	m     types.MemoryStore
 	ips   []*types.ProxyIP
 	n_ips []*types.ProxyIP
 )
 
 func init() {
-	m = NewMemoryStore()
+	m = NewCache()
 	ips = []*types.ProxyIP{
 		&types.ProxyIP{
 			IP:   "0.0.0.0",
@@ -49,7 +49,7 @@ func TestRefreshMemory(t *testing.T) {
 
 func TestNextMemory(t *testing.T) {
 	for i := 0; i < len(ips)*2; i ++ {
-		ips, err := m.Next(&ListOptions{
+		ips, err := m.Next(&types.ListOptions{
 			Limit: 1,
 		})
 		if err != nil || len(ips) == 0 {
@@ -77,7 +77,7 @@ func TestExpire(t *testing.T) {
 }
 
 func TestRefreshAppend(t *testing.T) {
-	err := m.Refresh(n_ips, &RefreshOptions{
+	err := m.Refresh(n_ips, &types.RefreshOptions{
 		Force: false,
 	})
 	if err != nil {

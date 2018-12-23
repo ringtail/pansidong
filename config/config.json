@@ -1,0 +1,11 @@
+{
+  "Global": {
+    "Port": "80"
+  },
+  "Backend": {
+    "Type": "boltdb"
+  },
+  "Memory": {
+    "Size": 100
+  }
+}

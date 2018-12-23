@@ -5,35 +5,37 @@ import (
 	"github.com/virtual-kubelet/virtual-kubelet/providers/aliyun/ingress/errors"
 )
 
+const (
+	NotFound = "NotFound"
+)
 
-
-type MemoryStore struct {
+type Cache struct {
 	cursor int
 	ips    []*types.ProxyIP
 }
 
-func (ms *MemoryStore) Next(options *ListOptions) ([]*types.ProxyIP, error) {
-	size := len(ms.ips)
+func (c *Cache) Next(options *types.ListOptions) ([]*types.ProxyIP, error) {
+	size := len(c.ips)
 	if size == 0 {
 		return nil, errors.New(NotFound)
 	}
 	ips := make([]*types.ProxyIP, 0)
 	if options != nil && options.Limit != 0 {
 		for i := 0; i < options.Limit; i ++ {
-			r_i := (i + ms.cursor) % size
-			ips = append(ips, ms.ips[r_i])
-			ms.cursor = ms.cursor + 1
+			r_i := (i + c.cursor) % size
+			ips = append(ips, c.ips[r_i])
+			c.cursor = c.cursor + 1
 		}
 	}
 	return ips, nil
 }
 
-func (ms *MemoryStore) List(options *ListOptions) ([]*types.ProxyIP, error) {
-	return ms.ips, nil
+func (c *Cache) List(options *types.ListOptions) ([]*types.ProxyIP, error) {
+	return c.ips, nil
 }
 
-func (ms *MemoryStore) Get(key string) (*types.ProxyIP, error) {
-	for _, ip := range ms.ips {
+func (c *Cache) Get(key string) (*types.ProxyIP, error) {
+	for _, ip := range c.ips {
 		if key == ip.IP {
 			return ip, nil
 		}
@@ -41,23 +43,23 @@ func (ms *MemoryStore) Get(key string) (*types.ProxyIP, error) {
 	return nil, errors.New(NotFound)
 }
 
-func (ms *MemoryStore) Expire(key string) error {
-	for i, ip := range ms.ips {
+func (c *Cache) Expire(key string) error {
+	for i, ip := range c.ips {
 		if key == ip.IP {
-			ms.ips = append(ms.ips[:i], ms.ips[i+1:]...)
+			c.ips = append(c.ips[:i], c.ips[i+1:]...)
 		}
 	}
 	return nil
 }
 
-func (ms *MemoryStore) Refresh(ips []*types.ProxyIP, options *RefreshOptions) error {
+func (c *Cache) Refresh(ips []*types.ProxyIP, options *types.RefreshOptions) error {
 	if options != nil && options.Force == true {
-		ms.ips = make([]*types.ProxyIP, len(ips))
-		ms.ips = ips
+		c.ips = make([]*types.ProxyIP, len(ips))
+		c.ips = ips
 	} else {
 		for _, ip := range ips {
 			exists := false
-			for _, oIp := range ms.ips {
+			for _, oIp := range c.ips {
 				if oIp.IP == ip.IP {
 					exists = true
 				}
@@ -65,12 +67,12 @@ func (ms *MemoryStore) Refresh(ips []*types.ProxyIP, options *RefreshOptions) er
 			if exists == true {
 				continue
 			}
-			ms.ips = append(ms.ips, ip)
+			c.ips = append(c.ips, ip)
 		}
 	}
 	return nil
 }
 
-func NewMemoryStore() Store {
-	return &MemoryStore{}
+func NewCache(config *types.MemoryConfig) types.MemoryStore {
+	return &Cache{}
 }
