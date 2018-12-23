@@ -22,9 +22,6 @@ type Data5uProvider struct {
 func (d *Data5uProvider) Name() (name string) {
 	return Data5uProviderName
 }
-func (d *Data5uProvider) CheckHealth() (healthy bool, nextTickTime time.Time) {
-	return
-}
 
 func (d *Data5uProvider) GetProxyList() (ips []*types.ProxyIP, err error) {
 	ips = make([]*types.ProxyIP, 0)

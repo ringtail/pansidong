@@ -16,14 +16,18 @@ type Server struct {
 
 func (s *Server) Run() {
 	r := mux.NewRouter()
-	r.HandleFunc("/ips", NextIpsHandler)
-	r.HandleFunc("/ips/expire", ExpireHandler)
+	r.HandleFunc("/ips", s.NextIpsHandler).Methods(http.MethodGet)
+	r.HandleFunc("/ip/{ip}/expire", s.ExpireHandler).Methods(http.MethodPost)
 	srv := &http.Server{
 		Handler: r,
 		Addr:    s.Addr,
 	}
-
-	log.Fatal(srv.ListenAndServe())
+	stopChan := make(chan struct{})
+	go s.CacheManager.Loop(stopChan)
+	if err := (srv.ListenAndServe()); err != nil {
+		stopChan <- struct{}{}
+		log.Fatal(err)
+	}
 }
 
 func NewServer(config *types.Config) *Server {

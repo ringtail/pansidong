@@ -22,7 +22,7 @@ const (
 )
 
 var (
-	GetProxyListProviderSingleton *GetProxyListProvider
+	GetProxyListProviderSingleton Provider
 )
 
 type GetProxyListResponse struct {

@@ -10,7 +10,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "pansidong",
+	Use:   "serve",
 	Short: "pansidong(盘丝洞）is a proxy ips' store service.",
 	Run:   Run,
 }
@@ -36,14 +36,14 @@ func Run(cmd *cobra.Command, args []string) {
 			Port: 8080,
 		},
 	}
-	if cfgFile == "" {
+	if cfgFile != "" {
 		data, err := ioutil.ReadFile(cfgFile)
 		if err != nil {
-			log.Fatal("Failed to read configFile,because of %s", err.Error())
+			log.Fatalf("Failed to read configFile,because of %s", err.Error())
 		}
 		err = json.Unmarshal(data, c)
 		if err != nil {
-			log.Fatal("Failed to create config,because of %s", err.Error())
+			log.Fatalf("Failed to create config,because of %s", err.Error())
 		}
 	}
 	s := server.NewServer(c)

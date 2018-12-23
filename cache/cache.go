@@ -7,6 +7,7 @@ import (
 	"sync"
 	"github.com/ringtail/pansidong/provider"
 	"fmt"
+	"github.com/ringtail/pansidong/backend"
 )
 
 type CacheManager struct {
@@ -24,6 +25,7 @@ func (cm *CacheManager) Loop(stopChan chan struct{}) {
 }
 
 func (cm *CacheManager) loop() {
+	cm.runOnce()
 	ticker := time.NewTicker(cm.Config.Interval)
 	for {
 		select {
@@ -71,11 +73,17 @@ func (cm *CacheManager) ExpireIp(ip string) error {
 		return err
 	}
 
+	if cm.Backend != nil {
+		err := cm.Backend.Expire(ip)
+		if err != nil {
+			log.Warnf("Failed to expire key from backend,because of %s", err.Error())
+		}
+	}
 	return nil
 }
 
 func (cm *CacheManager) FetchNextIps(options *types.ListOptions) ([]*types.ProxyIP, error) {
-	return nil, nil
+	return cm.Cache.Next(options)
 }
 
 func NewCacheManager(config *types.CacheConfig) (*CacheManager, error) {
@@ -84,12 +92,18 @@ func NewCacheManager(config *types.CacheConfig) (*CacheManager, error) {
 	}
 
 	cm := &CacheManager{
-		busy:   false,
-		Config: config,
+		busy:            false,
+		Config:          config,
+		ProviderManager: provider.NewProxyProviderManager(),
 	}
 
-	if cm.Backend != nil {
-		size := cm.Config.Memory.Size
+	cm.Cache = NewCache(config.Memory)
+
+	if config.Backend != nil {
+
+		cm.Backend = backend.BackendFactory(config.Backend)
+
+		size := config.Memory.Size
 		ips, err := cm.Backend.Next(&types.ListOptions{
 			Limit: size,
 		})

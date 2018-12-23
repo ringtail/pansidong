@@ -29,28 +29,4 @@ type BackendStore interface {
 	Insert(ips []*ProxyIP, options *InsertOptions) error
 }
 
-type BackendConfig interface {
-	Name() string
-	Config() interface{}
-}
 
-type BoltDBConfig struct {
-	Path string
-}
-
-func (bc *BoltDBConfig) Name() string {
-	return "boltdb"
-}
-
-func (bc *BoltDBConfig) Config() interface{} {
-	return bc
-}
-
-type BackendConfigUnknown struct {
-	Type   string
-	Config string
-}
-
-type MemoryConfig struct {
-	Size int
-}

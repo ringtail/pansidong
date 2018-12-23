@@ -1,4 +1,4 @@
-package pansidong
+package main
 
 import (
 	"github.com/ringtail/pansidong/cmd"
