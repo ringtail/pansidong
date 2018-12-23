@@ -31,14 +31,24 @@ type BackendStore interface {
 
 type BackendConfig interface {
 	Name() string
-	Config() map[string]string
+	Config() interface{}
 }
 
 type BoltDBConfig struct {
+	Path string
+}
+
+func (bc *BoltDBConfig) Name() string {
+	return "boltdb"
+}
+
+func (bc *BoltDBConfig) Config() interface{} {
+	return bc
 }
 
 type BackendConfigUnknown struct {
-	Type string
+	Type   string
+	Config string
 }
 
 type MemoryConfig struct {

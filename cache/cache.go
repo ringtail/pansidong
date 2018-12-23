@@ -1,4 +1,4 @@
-package pansidong
+package cache
 
 import (
 	"github.com/ringtail/pansidong/types"
@@ -9,24 +9,10 @@ import (
 	"fmt"
 )
 
-type CacheConfig struct {
-	Interval time.Duration
-	Memory   types.MemoryConfig
-	Backend  types.BackendConfig
-}
-
-func (cc *CacheConfig) valid() error {
-	return nil
-}
-
-func (cc *CacheConfig) applyDefault() error {
-	return nil
-}
-
 type CacheManager struct {
 	sync.Mutex
 	busy            bool
-	Config          *CacheConfig
+	Config          *types.CacheConfig
 	Cache           types.MemoryStore
 	Backend         types.BackendStore
 	ProviderManager *provider.ProxyProviderManager
@@ -92,15 +78,11 @@ func (cm *CacheManager) FetchNextIps(options *types.ListOptions) ([]*types.Proxy
 	return nil, nil
 }
 
-func NewCacheManager(config *CacheConfig) (*CacheManager, error) {
-	if err := config.valid(); err != nil {
+func NewCacheManager(config *types.CacheConfig) (*CacheManager, error) {
+	if err := config.Valid(); err != nil {
 		return nil, fmt.Errorf("Failed to create cache manager because of %s", err.Error())
 	}
 
-	err := config.applyDefault()
-	if err != nil {
-		return nil, fmt.Errorf("Failed to apply default config to cache config,because of %s", err.Error())
-	}
 	cm := &CacheManager{
 		busy:   false,
 		Config: config,
